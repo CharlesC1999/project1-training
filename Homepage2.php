@@ -38,8 +38,10 @@ $product_type_count = $result_all->num_rows;
   <body>
     <section>
       <div class="container-wrapper">
-        <div class="img-container container-front">
+        <div class="img-container container-front ">
           <h1>Traning web</h1>
+          <!-- <label for=""></label>
+          <input type="text"> -->
           <div class="swiper">
             <div class="swiper-wrapper">
             <?php
