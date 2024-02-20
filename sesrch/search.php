@@ -5,13 +5,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <link href="search.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body style="display: flex; justify-content:center ; align-items: center;height: 100vh;overflow: hidden;">
-  <form  class="bar">
-    <input type="search" name="search" pattern=".*\S.*" required autocomplete="off">
-    <button class="search-btn" type="submit">
-      <span>Search</span>
-    </button>
-  </form>
+  <div class="searchBox">
+    <input class="searchInput"type="text" name="" placeholder="Search">
+      <button class="searchButton" href="#">
+          <i class="material-icons">
+              search
+          </i>
+      </button>
+  </div>
 </body>
 </html>

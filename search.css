@@ -1,0 +1,85 @@
+.searchBox {
+  position: absolute;
+  top: 5%;
+  right: 3%;
+  /* transform: translate(-50%, 50%); */
+  color: aliceblue;
+  background: rgba(189, 181, 181, 0.45);
+  backdrop-filter: blur(20px);
+  height: 60px;
+  border-radius: 40px;
+  padding: 10px;
+  transition: opacity 0.5s ease-in-out; /* 轉場效果持續0.5秒 */
+  opacity: 1; /* 預設的不透明度是1，完全不透明 */
+}
+
+input[type="search"] {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important; /* 針對 Mozilla Firefox */
+  appearance: none !important; /* 標準屬性，針對所有支持的瀏覽器 */
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important; /* 移除聚焦時的藍色輪廓 */
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: rgb(255, 255, 255) !important;
+}
+
+input[type="search"]::placeholder {
+  color: rgba(214, 214, 214, 0.805) !important;
+  font-size: 20px !important;
+}
+
+.searchBox:hover > .searchInput {
+  width: 240px;
+  padding: 0 6px;
+}
+
+.searchBox:hover > .searchButton {
+  background: #9c4bbc;
+  color: #f2f2f2;
+}
+.searchBox:hover > .searchButton {
+  transform: rotate(90deg);
+}
+
+.searchButton {
+  color: #9c4bbc;
+  float: right;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.4s;
+  border: 0;
+}
+
+.searchInput {
+  border: none;
+  background: none;
+  outline: none;
+  float: left;
+  padding: 0;
+  color: white;
+  font-size: 16px;
+  transition: 0.4s;
+  line-height: 40px;
+  width: 0px;
+}
+
+@media screen and (max-width: 620px) {
+  .searchBox:hover > .searchInput {
+    width: 150px;
+    padding: 0 6px;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .searchBox {
+    opacity: 0; /* 這將使元素變得透明 */
+    visibility: hidden; /* 這將使元素不可見，並且不會影響布局 */
+  }
+}

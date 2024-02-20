@@ -23,6 +23,8 @@ $product_type_count = $result_all->num_rows;
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <!-- icon -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- bs5 -->
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -33,6 +35,7 @@ $product_type_count = $result_all->num_rows;
     <!-- Swiper -->
     <link href="https://cdn.jsdelivr.net/npm/swiper@11.0.6/swiper-bundle.min.css" rel="stylesheet">
     <!-- custom -->
+    <link rel="stylesheet" href="search.css">
     <link rel="stylesheet" href="style2.css">
   </head>
   <body>
@@ -40,6 +43,14 @@ $product_type_count = $result_all->num_rows;
       <div class="container-wrapper">
         <div class="img-container container-front ">
           <h1>Traning web</h1>
+          <div class="searchBox d-flex align-items-center">
+            <input class="searchInput form-control" type="search" name="search" placeholder="Search">
+            <button class="searchButton" href="#" type="submit">
+              <i class="material-icons">
+                search
+              </i>
+            </button>
+          </div>
           <!-- <label for=""></label>
           <input type="text"> -->
           <div class="swiper">
