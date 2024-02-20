@@ -1,12 +1,37 @@
 <?php
 require_once "db_connect.php";
+$result_all = null;
+$no_results_msg = ''; // 用於存儲沒有結果的訊息
 
-$sql = "SELECT * FROM images
-JOIN author ON images.author_id  =author.a_id
-WHERE images.valid = 1 ORDER BY images.id";
-$result_all = $conn->query($sql);
-$product_type_count = $result_all->num_rows;
+$sql_all = "SELECT * FROM images JOIN author ON images.author_id = author.a_id WHERE images.valid = 1 ORDER BY images.id";
+$result_all = $conn->query($sql_all);
 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['searchQuery'])) {
+    $searchQuery = $_POST['searchQuery'];
+
+    // 使用 prepared statement 來防止 SQL 注入
+    $stmt = $conn->prepare("SELECT * FROM images JOIN author ON images.author_id = author.a_id WHERE images.valid = 1 AND (images.img_name LIKE ? OR author.name LIKE ?) ORDER BY images.id");
+    $likeQuery = '%' . $searchQuery . '%';
+    $stmt->bind_param('ss', $likeQuery, $likeQuery); // 'ss' 表示兩個綁定變量都是字串型態
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $product_type_count = $result->num_rows;
+
+    if ($product_type_count > 0) {
+        $result_all = $result;
+        $rows = $result_all->fetch_all(MYSQLI_ASSOC);
+    } else {
+        $no_results_msg = "0 results"; // 沒有結果時的訊息
+        $rows = []; // 確保$rows是一個空陣列
+    }
+    $stmt->close();
+} else {
+    if ($result_all) {
+        $rows = $result_all->fetch_all(MYSQLI_ASSOC);
+    } else {
+        $rows = []; // 確保$rows是一個空陣列
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -43,97 +68,99 @@ $product_type_count = $result_all->num_rows;
       <div class="container-wrapper">
         <div class="img-container container-front ">
           <h1>Traning web</h1>
-          <div class="searchBox d-flex align-items-center">
-            <input class="searchInput form-control" type="search" name="search" placeholder="Search">
-            <button class="searchButton" href="#" type="submit">
-              <i class="material-icons">
-                search
-              </i>
-            </button>
-          </div>
+          <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+            <div class="searchBox d-flex align-items-center">
+              <input class="searchInput form-control" type="search" name="searchQuery" placeholder="Search">
+              <button class="searchButton" type="submit">
+                <i class="material-icons">
+                  search
+                </i>
+              </button>
+            </div>
+          </form>
           <!-- <label for=""></label>
           <input type="text"> -->
           <div class="swiper">
             <div class="swiper-wrapper">
-            <?php
-$rows = $result_all->fetch_all(MYSQLI_ASSOC);
+            <?php if (!empty($rows)): // 檢查$rows是否不為空 ?>
+										    <?php foreach ($rows as $index => $cate): ?>
+										            <div class="swiper-slide post">
+										                  <div class="post-image-container">
+										                    <img
+										                      class="post-img"
+										                      src="img/<?=$cate['img_url']?>"
+										                      alt="recipe"
+										                    />
+										                    <div class="overlay"></div>
+										                  </div>
 
-foreach ($rows as $index => $cate):
-?>
-            <div class="swiper-slide post">
-                  <div class="post-image-container">
-                    <img
-                      class="post-img"
-                      src="img/<?=$cate['img_url']?>"
-                      alt="recipe"
-                    />
-                    <div class="overlay"></div>
-                  </div>
+										                  <div class="post-body">
+										                    <img
+										                      class="post-avatar"
+										                      src="./img/author/<?=$cate['author_url']?>"
+										                      alt="avatar"
+										                    />
+										                    <div class="post-detail">
+										                      <h2 class="post-name"><?=$cate['img_name']?></h2>
+										                      <p class="post-author"><?=$cate['name']?></p>
+										                    </div>
 
-                  <div class="post-body">
-                    <img
-                      class="post-avatar"
-                      src="./img/author/<?=$cate['author_url']?>"
-                      alt="avatar"
-                    />
-                    <div class="post-detail">
-                      <h2 class="post-name"><?=$cate['img_name']?></h2>
-                      <p class="post-author"><?=$cate['name']?></p>
-                    </div>
-
-                    <div class="post-actions">
-                      <a class="post-like" href="javascript:void(0)"
-                        ><i class="fa-solid fa-star"></i></a>
-                      <!-- font-awesome heart icon 但是沒有連結 -->
-                      <button
-                        class="post-actions-controller"
-                        data-target="post-actions-content-<?=$index?>"
-                        aria-controls="post-actions-content-<?=$index?>"
-                        aria-expanded="false"
-                      >
-                        <i class="fa-solid fa-ellipsis fa-2xl"></i>
-                      </button>
-                      <div
-                        class="post-actions-content"
-                        id="post-actions-content-<?=$index?>"
-                        data-visible="false"
-                        aria-hidden="true"
-                      >
-                        <ul role="list" class="grid-flow ps-0 mb-0" data-spacing="small">
-                          <li>
-                            <a
-                              class="post-actions-link"
-                              href="javascript:void(0)"
-                            >
-                              <i class="fa-solid fa-folder-open"></i>
-                              <span>Add to Collection</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="post-actions-link flip-trigger"
-                              href="javascript:void(0)"
-                              data-id="<?=$cate['id']?>"
-                            >
-                              <i class="fa-solid fa-eye"></i>
-                              <span>Show the detail</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              class="post-actions-link"
-                              href="javascript:void(0)"
-                            >
-                              <i class="fa-solid fa-user-plus"></i>
-                              <span>Follow the author</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <?php endforeach;?>
+										                    <div class="post-actions">
+										                      <a class="post-like" href="javascript:void(0)"
+										                        ><i class="fa-solid fa-star"></i></a>
+										                      <!-- font-awesome heart icon 但是沒有連結 -->
+										                      <button
+										                        class="post-actions-controller"
+										                        data-target="post-actions-content-<?=$index?>"
+										                        aria-controls="post-actions-content-<?=$index?>"
+										                        aria-expanded="false"
+										                      >
+										                        <i class="fa-solid fa-ellipsis fa-2xl"></i>
+										                      </button>
+										                      <div
+										                        class="post-actions-content"
+										                        id="post-actions-content-<?=$index?>"
+										                        data-visible="false"
+										                        aria-hidden="true"
+										                      >
+										                        <ul role="list" class="grid-flow ps-0 mb-0" data-spacing="small">
+										                          <li>
+										                            <a
+										                              class="post-actions-link"
+										                              href="javascript:void(0)"
+										                            >
+										                              <i class="fa-solid fa-folder-open"></i>
+										                              <span>Add to Collection</span>
+										                            </a>
+										                          </li>
+										                          <li>
+										                            <a
+										                              class="post-actions-link flip-trigger"
+										                              href="javascript:void(0)"
+										                              data-id="<?=$cate['id']?>"
+										                            >
+										                              <i class="fa-solid fa-eye"></i>
+										                              <span>Show the detail</span>
+										                            </a>
+										                          </li>
+										                          <li>
+										                            <a
+										                              class="post-actions-link"
+										                              href="javascript:void(0)"
+										                            >
+										                              <i class="fa-solid fa-user-plus"></i>
+										                              <span>Follow the author</span>
+										                            </a>
+										                          </li>
+										                        </ul>
+										                      </div>
+										                    </div>
+										                  </div>
+										                </div>
+										                <?php endforeach;?>
+  <?php else: // 如果$rows為空，顯示沒有結果的訊息 ?>
+										    <p><?php echo $no_results_msg; ?></p>
+										  <?php endif;?>
             </div>
             <div class="swiper-scrollbar"></div>
           </div>

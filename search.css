@@ -30,9 +30,10 @@ input[type="search"]::placeholder {
   font-size: 20px !important;
 }
 
-.searchBox:hover > .searchInput {
+.searchBox:hover > .searchInput,
+.searchInput:focus {
   width: 240px;
-  padding: 0 6px;
+  padding: 0 5px;
 }
 
 .searchBox:hover > .searchButton {
